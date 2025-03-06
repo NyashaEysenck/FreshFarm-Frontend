@@ -4,10 +4,33 @@ const FarmSales = () => {
   const [submissions, setSubmissions] = useState([]);
 
   useEffect(() => {
+    // Fetch initial submissions
     fetch(`${process.env.REACT_APP_API_URL}/api/submissions`)
       .then((res) => res.json())
       .then((data) => setSubmissions(data))
       .catch((err) => console.error("Error fetching submissions:", err));
+
+    // WebSocket connection
+    const ws = new WebSocket(process.env.REACT_APP_WS_URL);
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      
+      switch(message.type) {
+        case "INITIAL_DATA":
+          setSubmissions(message.data);
+          break;
+        case "NEW_SUBMISSION":
+          setSubmissions(prev => [message.data, ...prev]);
+          break;
+        default:
+          console.log("Unknown message type:", message.type);
+      }
+    };
+
+    return () => {
+      ws.close();
+    };
   }, []);
 
   return (
@@ -31,13 +54,12 @@ const FarmSales = () => {
 };
 
 const listStyle = {
-  border: "2px solid #444", // Darker border for contrast
+  border: "2px solid #444",
   padding: "12px",
   marginBottom: "10px",
   borderRadius: "5px",
-  background: "#ffffff", // White background
-  color: "#000000" // Black text for high contrast
+  background: "#ffffff",
+  color: "#000000"
 };
-
 
 export default FarmSales;
