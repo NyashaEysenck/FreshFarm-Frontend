@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import "./styles.css";
+import Index from "./pages/Index";
+import FarmSales from "./pages/FarmSales";
 
 function App() {
+  const [submissions, setSubmissions] = useState([]);
+
+  const handleFormSubmit = (formData) => {
+    setSubmissions([...submissions, formData]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Index onSubmit={handleFormSubmit} />} />
+        <Route path="/farm-sales" element={<FarmSales submissions={submissions} />} />
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
+
