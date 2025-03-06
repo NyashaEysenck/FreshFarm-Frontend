@@ -4,7 +4,7 @@ const FarmSales = () => {
   const [submissions, setSubmissions] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/submissions")
+    fetch(`${process.env.REACT_APP_API_URL}/api/submissions`)
       .then((res) => res.json())
       .then((data) => setSubmissions(data))
       .catch((err) => console.error("Error fetching submissions:", err));
